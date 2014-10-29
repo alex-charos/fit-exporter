@@ -1,0 +1,37 @@
+{
+  "name": "fit-explorer",
+  "version": "1.0.0",
+  "description": "A web app to export Google Fit data",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamarasaurus/fit-exporter.git"
+  },
+  "keywords": [
+    "google",
+    "fit",
+    "data",
+    "export",
+    "json",
+    "csv"
+  ],
+  "author": "Tamara Chahine",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tamarasaurus/fit-exporter/issues"
+  },
+  "homepage": "https://github.com/tamarasaurus/fit-exporter",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "cookie-parser": "^1.3.3",
+    "ejs": "^1.0.0",
+    "express": "^4.10.1",
+    "express-session": "^1.9.1",
+    "jade": "^1.7.0",
+    "method-override": "^2.3.0",
+    "request": "^2.47.0"
+  }
+}
