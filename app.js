@@ -33,13 +33,13 @@ passport.deserializeUser(function(obj, done) {
 
 
 var getDetails = function(token) {
-  token = new Buffer(token).toString('base64')
+  // token = new Buffer(token).toString('base64')
   console.log(token)
   request(
       {
         url: 'https://www.googleapis.com/fitness/v1/users/me/dataSources',
          headers : {
-              "Authorization" : token.toString("base64")
+              "Authorization" : 'Bearer '+token
           }
       },
       function (error, response, body) {
@@ -64,6 +64,7 @@ passport.use(new GoogleStrategy({
 
     console.log('access', accessToken);
 
+    // store the access token
     getDetails(accessToken);
 
     // asynchronous verification, for effect...
@@ -118,6 +119,9 @@ app.get('/login', function(req, res){
   res.render('login', { user: req.user });
 });
 
+
+
+
 // GET /auth/google
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  The first step in Google authentication will involve
@@ -125,8 +129,16 @@ app.get('/login', function(req, res){
 //   will redirect the user back to this application at /auth/google/callback
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/userinfo.profile',
-                                            'https://www.googleapis.com/auth/userinfo.email'] }),
+'https://www.googleapis.com/auth/userinfo.email',
+'https://www.googleapis.com/auth/fitness.activity.read',
+// 'https://www.googleapis.com/auth/fitness.activity.write'
+'https://www.googleapis.com/auth/fitness.body.read',
+// 'https://www.googleapis.com/auth/fitness.body.write'
+'https://www.googleapis.com/auth/fitness.location.read'
+// 'https://www.googleapis.com/auth/fitness.location.write'
+                                            ] }),
   function(req, res){
+
     // The request will be redirected to Google for authentication, so this
     // function will not be called.
   });
