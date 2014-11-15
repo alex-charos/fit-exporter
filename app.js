@@ -31,6 +31,9 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+var setCookie = function(token) {
+  res.cookie('accesstoken', token);
+}
 
 var getDetails = function(token) {
   // token = new Buffer(token).toString('base64')
@@ -42,9 +45,9 @@ var getDetails = function(token) {
               "Authorization" : 'Bearer '+token
           }
       },
-      function (error, response, body) {
+      function (error, res, body) {
         console.log('error', error);
-        console.log('response', response);
+        console.log('response', res);
         console.log('body', body);
           // Do more stuff with 'body' here
       }
@@ -62,10 +65,10 @@ passport.use(new GoogleStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
 
-    console.log('access', accessToken);
+    // console.log('access', accessToken);
 
     // store the access token
-    getDetails(accessToken);
+    // getDetails(accessToken);
 
     // asynchronous verification, for effect...
     process.nextTick(function () {
@@ -74,7 +77,7 @@ passport.use(new GoogleStrategy({
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Google account with a user record in your database,
       // and return that user instead.
-      return done(null, profile);
+      return done(null, {profile: profile, token: accessToken});
     });
   }
 ));
@@ -111,11 +114,12 @@ app.get('/', function(req, res){
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
-  console.log(req)
+  console.log('---------ACCOUNT---------');
   res.render('account', { user: req.user });
 });
 
 app.get('/login', function(req, res){
+  console.log('---------LOGIN---------');
   res.render('login', { user: req.user });
 });
 
@@ -138,7 +142,7 @@ app.get('/auth/google',
 // 'https://www.googleapis.com/auth/fitness.location.write'
                                             ] }),
   function(req, res){
-
+    console.log('authenticated');
     // The request will be redirected to Google for authentication, so this
     // function will not be called.
   });
@@ -150,7 +154,9 @@ app.get('/auth/google',
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
+  function(req, res, stuff) {
+    var token = req.user.token;
+    res.cookie('token', token);
     res.redirect('/');
   });
 
