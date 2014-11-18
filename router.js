@@ -5,6 +5,7 @@ config = require('./config'),
 Parser = require('./lib/parser'),
 parser = new Parser();
 
+
 var GOOGLE_CLIENT_ID = config.client_id;
 var GOOGLE_CLIENT_SECRET = config.secret;
 
@@ -38,14 +39,14 @@ function ensureAuthenticated(req, res, next) {
 router.use(function(req, res, next) {
 
 	// log each request to the console
-	console.log(req.method, req.url);
+	// console.log(req.method, req.url);
 
 	// continue doing what we were doing and go to the route
 	next();	
 });
 
 router.get('/', function(req, res){
-	console.log(req.isAuthenticated());
+	// console.log(req.isAuthenticated());
 	if(req.isAuthenticated()) {
 		res.redirect('/data');
 	} else {

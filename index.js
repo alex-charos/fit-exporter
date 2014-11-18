@@ -9,7 +9,8 @@ session = require('express-session'),
 methodOverride = require('method-override'),
 jade = require('jade'),
 request = require('request'),
-router = require('./router');
+router = require('./router'),
+MongoStore = require('connect-mongo')(session);
 
 var app = express();
 
@@ -19,19 +20,22 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(session({ 
-    secret: 'keyboard cat' ,
+    store: new MongoStore({
+      db : 'sessions'
+    }),
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    secret: 'cats'
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(__dirname + '/public'));
 
-
+app.use('/', router);
 // Authentication
 
-app.use('/', router);
+
 
 app.listen(3000);
 
