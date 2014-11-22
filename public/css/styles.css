@@ -1,0 +1,46 @@
+body {
+	width: 100%;
+	font-family: Helvetica; 
+}
+
+body * {
+	box-sizing: border-box;
+}
+
+a {
+	color: #03a9f4;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+button {
+	background: #03a9f4;
+	color: #fff;
+	border-radius: 2px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+small {
+	font-size: 10px;
+	color: #ccc;
+}
+
+.content {
+	width: 50%;
+	margin: 0 auto;
+}
+
+.block-list {
+	list-style: none;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.block-list li {
+	list-style: none;
+	text-indent: 0;
+	padding: 10px;
+	border-bottom: 1px #eee solid;
+}

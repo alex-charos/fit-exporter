@@ -1,0 +1,11 @@
+include partials/_header
+
+body
+	.content
+		h1 Data
+		ul.block-list
+			each source in data.dataSource
+				li
+					a(href='/data/'+source.dataStreamId+'/details')= source.dataStreamName
+					br
+					small= source.dataStreamId

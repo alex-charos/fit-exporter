@@ -1,5 +1,8 @@
-if !user
-	h2 Welcome, log in 
-else
-	h2 Welcome 
-		span= user.displayName
+include partials/_header
+
+body
+	if !user
+		h2 Welcome, log in 
+	else
+		h2 Welcome 
+			span= user.displayName

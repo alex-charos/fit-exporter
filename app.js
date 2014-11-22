@@ -1,7 +1,8 @@
 var google = require('googleapis'),
 config = require('./config'),
-request = require('request'),
 bodyParser = require('body-parser'),
+Parser = require('./lib/parser'),
+parser = new Parser(),
 express = require('express'),
 EventEmitter = require('events').EventEmitter;
 var OAuth2 = google.auth.OAuth2;
@@ -45,9 +46,19 @@ app.use(express.static(__dirname + '/public'));
 
 
 var isAuthenticated = function(req, res, next){
-	if (req.session.access_token) { return next(); }
-	res.redirect('/login');
+	if (req.session.access_token) { 
+		parser.setToken(req.session.access_token);
+		return next(); 
+	}
+	res.redirect('/logout');
 }
+
+
+app.get('/logout', function(req, res){
+  req.session.destroy(function(){
+  	res.send('You have been logged out');
+  });
+});
 
 app.get('/', isAuthenticated, function(req, res){
 	res.redirect('/data');
@@ -62,29 +73,29 @@ app.get('/auth/google/callback', function(req, res){
 	  if(!err) {
 	  	ev.emit('update:tokens', tokens);
 	  	req.session.access_token = tokens.access_token;
-	  	console.log(tokens.access_token, req.session);
+	  	parser.setToken(tokens.access_token);
 	  	res.redirect('/');
 	  }
 	});
 });
 
-app.get('/data', function(req, res){
-	var token = req.session.access_token;
-	console.log(token);
-	request(
-      {
-        url: 'https://www.googleapis.com/fitness/v1/users/me/dataSources',
-         headers : {
-              "Authorization" : 'Bearer '+token
-          }
-      },
-      function(err, req, body){
-      	if(!err) {
-      		res.send(body);
-      	}
-      }
-  );
+app.get('/data', isAuthenticated, function(req, res){
+	parser.getDataSources(function(err, req, body){
+		body = JSON.parse(body);
+		console.log(body.error)
+		if(!err && !body.error) {
+			res.render('data', {data: body});
+		}else {
+			res.send('Your access token expired, please log out and log back in');
+		}
+	});
 });
+
+app.get('/data/:stream_id/details', isAuthenticated , function(req, res) {
+	parser.getStreamDetails(req.params.stream_id, function(err, req, body){
+		res.json(JSON.parse(body));
+	});
+})
 
 app.listen(3000);
 
