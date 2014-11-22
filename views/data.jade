@@ -6,6 +6,6 @@ body
 		ul.block-list
 			each source in data.dataSource
 				li
-					a(href='/data/'+source.dataStreamId+'/details')= source.dataStreamName
+					a(href='/data/'+source.dataStreamId+'/details')= source.dataStreamName || source.dataStreamId
 					br
 					small= source.dataStreamId
