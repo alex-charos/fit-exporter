@@ -11,7 +11,7 @@ var session = require('express-session'),
 methodOverride = require('method-override'),
 MongoStore = require('connect-mongo')(session);
 
-var oauth2Client = new OAuth2(config.CLIENT_ID, config.CLIENT_SECRET, config.REDIRECT_URL);
+var oauth2Client = new OAuth2(config.oath.clientId, config.oath.clientSecret, config.oath.redirectUrl);
 var ev = new EventEmitter();
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
@@ -21,6 +21,7 @@ var scopes = [
 	'https://www.googleapis.com/auth/fitness.activity.read',
 	'https://www.googleapis.com/auth/fitness.body.read',
 	'https://www.googleapis.com/auth/fitness.location.read'
+
 ];
 
 var url = oauth2Client.generateAuthUrl({
@@ -35,7 +36,15 @@ app.set('view engine', 'jade');
 app.use(methodOverride());
 app.use(session({ 
     store: new MongoStore({
-      db : 'sessions'
+      db : config.mongo.db,
+      collection: config.mongo.collection,
+      host: config.mongo.host,
+      port: config.mongo.port,
+      autoReconnect: true,
+      username : config.mongo.username,
+      password : config.mongo.password
+
+
     }),
     resave: true,
     saveUninitialized: true,
@@ -81,6 +90,7 @@ app.get('/auth/google/callback', function(req, res){
 
 app.get('/data', isAuthenticated, function(req, res){
 	parser.getDataSources(function(err, req, body){
+		
 		body = JSON.parse(body);
 		console.log(body.error)
 		if(!err && !body.error) {
@@ -90,6 +100,7 @@ app.get('/data', isAuthenticated, function(req, res){
 		}
 	});
 });
+
 
 app.get('/data/:stream_id/details', isAuthenticated , function(req, res) {
 	parser.getStreamDetails(req.params.stream_id, function(err, req, body){
