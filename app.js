@@ -91,6 +91,7 @@ app.get('/auth/google/callback', function(req, res){
 app.get('/data', isAuthenticated, function(req, res){
 	parser.getDataSources(function(err, req, body){
 		body = JSON.parse(body);
+		console.log(body);
 		if(!err && !body.error) {
 			res.render('data', {data: body});
 		}else {
@@ -101,15 +102,26 @@ app.get('/data', isAuthenticated, function(req, res){
 
 
 app.get('/data/:stream_id/details', isAuthenticated , function(req, res) {
-	parser.getStreamDetails(req.params.stream_id, function(err, req, body){
+	getStreamDetails(req.params.stream_id, res, function(body) {res.render('stream', {stream: body});});
+})
+
+var getStreamDetails = function(streamId, res, cb){
+	parser.getStreamDetails(streamId, function(err, req, body){
 		body = JSON.parse(body);
-		console.log(body);
+		console.log(req.params);
 		if(!err && !body.error) {
-			res.render('stream', {stream: body});
+			cb(body);
 		}else {
 			res.send('Your access token expired, please log out and log back in');
 		}
 	});
+
+
+
+}
+
+app.get('/data/:stream_id/details/raw', isAuthenticated , function(req, res) {
+	getStreamDetails(req.params.stream_id, res, function(body) {res.json(body)});
 })
 
 app.listen(3000);
