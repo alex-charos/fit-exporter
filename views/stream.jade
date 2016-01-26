@@ -2,18 +2,18 @@ include partials/_header
 
 body
 	.content
-		strong=stream.dataSourceId
+		a(href='/data/'+stream.dataStreamId+'/details/raw')=stream.dataSourceId
 		p
-		if stream.point != undefined
-		table
-			each point in stream.point
-					tr
-						td=new Date(point.startTimeNanos/1000000).toISOString() 
+		if stream.point !== undefined 
+			table
+				each point in stream.point
+						tr
+							td=new Date(point.startTimeNanos/1000000).toISOString() 
 
-						td=new Date(point.endTimeNanos/1000000).toISOString()
-						
-						td=point.dataTypeName
-						
-						each value in point.value
-							td=value.intVal
-							td=value.fpVal
+							td=new Date(point.endTimeNanos/1000000).toISOString()
+							
+							td=point.dataTypeName
+							
+							each value in point.value
+								td=value.intVal
+								td=value.fpVal
